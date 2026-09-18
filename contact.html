@@ -157,13 +157,46 @@ footer{background:var(--blue);color:var(--ink);padding:56px 0 26px;border-top:3p
 <section>
   <div class="wrap">
     <div class="contact-grid">
-      <form class="form paper" onsubmit="event.preventDefault();this.reset();this.querySelector('.btn').textContent='Sent — thank you ✳'">
-        <label>Your name</label><input type="text" required placeholder="First &amp; last name" />
-        <label>Email</label><input type="email" required placeholder="you@email.com" />
-        <label>Subject</label><input type="text" placeholder="What's this about?" />
-        <label>Message</label><textarea required placeholder="Tell us everything…"></textarea>
+      <form class="form paper" id="pilar-contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="921fc43d-7a9a-465c-b9f5-e15a9551bfa5" />
+        <input type="hidden" name="from_name" value="Pílar — site web" />
+        <input type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" />
+        <label>Your name</label><input type="text" name="name" required placeholder="First &amp; last name" />
+        <label>Email</label><input type="email" name="email" required placeholder="you@email.com" />
+        <label>Subject</label><input type="text" name="subject" placeholder="What's this about?" />
+        <label>Message</label><textarea name="message" required placeholder="Tell us everything…"></textarea>
         <button class="btn" type="submit">Send it ✳</button>
       </form>
+      <script>
+      (function(){
+        var f=document.getElementById('pilar-contact-form');
+        if(!f)return;
+        f.addEventListener('submit',function(e){
+          e.preventDefault();
+          var btn=f.querySelector('.btn');
+          var original=btn.textContent;
+          btn.textContent='Sending…';
+          btn.disabled=true;
+          var data=Object.fromEntries(new FormData(f).entries());
+          fetch('https://api.web3forms.com/submit',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Accept':'application/json'},
+            body:JSON.stringify(data)
+          }).then(function(r){return r.json();}).then(function(json){
+            if(json.success){
+              f.reset();
+              btn.textContent='Sent — thank you ✳';
+            }else{
+              btn.textContent='Oops — try again';
+              btn.disabled=false;
+            }
+          }).catch(function(){
+            btn.textContent='Oops — try again';
+            btn.disabled=false;
+          });
+        });
+      })();
+      </script>
       <div class="cinfo">
         <svg class="star-sticker" style="width:44px;top:-20px;right:0;transform:rotate(16deg)" viewBox="0 0 100 100"><path d="M50 5 61 39 97 39 68 61 79 95 50 73 21 95 32 61 3 39 39 39Z" fill="#1B1A18" stroke="#A6CDF4" stroke-width="9" stroke-linejoin="round"/></svg>
         <h3>Other ways to reach us</h3>
